@@ -1,0 +1,36 @@
+# Default values for mysql-helm.
+# This is a YAML-formatted file.
+# Declare variables to be passed into your templates.
+
+replicaCount: 2
+
+image:
+  repository: bitnami/mysql
+  pullPolicy: IfNotPresent
+  # Overrides the image tag whose default is the chart appVersion.
+  tag: "latest"
+
+imagePullSecrets: []
+nameOverride: "mysql"
+fullnameOverride: "mysql"
+
+service:
+  type: ClusterIP
+  port: 3306
+  clusterip: None
+
+secret:
+  mysqlRootPassword: mysqlroot
+  mysqlPassword: mysqlroot
+  mysqlUser: admin
+
+configmap:
+  mysqlDatabase: mylwdb
+
+pvc:
+  storageRequest: 1Gi
+
+volumemounts:
+  mysqlPath: /bitnami/mysql
+  configPath: /opt/bitnami/mysql/conf/my.cnf
+  configSubpath: my.cnf

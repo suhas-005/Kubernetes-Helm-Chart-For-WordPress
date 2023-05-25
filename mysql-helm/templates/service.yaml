@@ -1,0 +1,16 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: word-sql-db
+  labels:
+    {{- include "mysql-helm.labels" . | nindent 4 }}
+spec:
+  type: {{ .Values.service.type }}
+  clusterIP: {{ .Values.service.clusterip }}
+  ports:
+    - port: {{ .Values.service.port }}
+      targetPort: http
+      protocol: TCP
+      name: http
+  selector:
+    {{- include "mysql-helm.selectorLabels" . | nindent 4 }}

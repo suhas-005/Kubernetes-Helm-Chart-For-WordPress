@@ -1,0 +1,42 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: word-sql-db
+  labels:
+    {{- include "mysql-helm.labels" . | nindent 4 }}
+spec:
+  replicas: {{ .Values.replicaCount }}
+  selector:
+    matchLabels:
+      {{- include "mysql-helm.selectorLabels" . | nindent 6 }}
+  template:
+    metadata:
+      labels:
+        {{- include "mysql-helm.selectorLabels" . | nindent 8 }}
+    spec:
+      containers:
+        - name: {{ include "mysql-helm.fullname" . }}-pod
+          image: "{{ .Values.image.repository }}"
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
+          envFrom:
+            - configMapRef:
+                name: {{ include "mysql-helm.fullname" . }}-config 
+            - secretRef:
+                name: {{ include "mysql-helm.fullname" . }}-secret
+          ports:
+            - name: http
+              containerPort: {{ .Values.service.port }}
+              protocol: TCP
+          volumeMounts:
+            - name: {{ include "mysql-helm.fullname" . }}-vol
+              mountPath: {{ .Values.volumemounts.mysqlPath }}
+            - name: {{ include "mysql-helm.fullname" . }}-conf
+              mountPath: {{ .Values.volumemounts.configPath }}
+              subPath: {{ .Values.volumemounts.configSubpath }}
+      volumes:
+      - name: {{ include "mysql-helm.fullname" . }}-vol
+        persistentVolumeClaim:
+          claimName: {{ include "mysql-helm.fullname" . }}-pvc
+      - name: {{ include "mysql-helm.fullname" . }}-conf
+        configMap:
+          name: {{ include "mysql-helm.fullname" . }}-configuration

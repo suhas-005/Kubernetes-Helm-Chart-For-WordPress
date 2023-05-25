@@ -1,0 +1,38 @@
+# Default values for wd-helm.
+# This is a YAML-formatted file.
+# Declare variables to be passed into your templates.
+
+replicaCount: 2
+
+image:
+  repository: bitnami/wordpress
+  pullPolicy: IfNotPresent
+  # Overrides the image tag whose default is the chart appVersion.
+  tag: "latest"
+
+imagePullSecrets: []
+nameOverride: "wordpress"
+fullnameOverride: "wordpress"
+
+volumemounts:
+  path: /bitnami/wordpress 
+
+
+service:
+  type: ClusterIP
+  port: 8080
+
+configmap:
+  wordpressDatabaseHost: word-sql-db
+  wordpressDatabaseName: mylwdb
+  wordpressUsername: user
+  wordpressDatabasePort: 4340
+
+secret:
+  wordpressDatabasePassword: mysqlroot
+  wordpressDatabaseUser: admin
+
+pvc:
+  storageRequest: 1Gi
+
+
